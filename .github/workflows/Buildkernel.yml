@@ -38,18 +38,18 @@ jobs:
       CCACHE_HARDLINK: "true"
 
     steps:
-      - name: Maximize Build Space
-        uses: AdityaGarg8/remove-unwanted-software@v5
-        with:
-          remove-dotnet: 'true'
-          remove-android: 'true'
-          remove-haskell: 'true'
-          remove-codeql: 'true'
-          remove-docker-images: 'true'
-          remove-large-packages: 'true'
-          remove-swapfile: 'true'
-          remove-cached-tools: 'false'
-          verbose: 'true'
+      #- name: Maximize Build Space
+        #uses: AdityaGarg8/remove-unwanted-software@v5
+        #with:
+          #remove-dotnet: 'true'
+          #remove-android: 'true'
+          #remove-haskell: 'true'
+          #remove-codeql: 'true'
+          #remove-docker-images: 'true'
+          #remove-large-packages: 'true'
+          #remove-swapfile: 'true'
+          #remove-cached-tools: 'false'
+          #verbose: 'true'
 
       - name: Install toolkit
         run: |
@@ -59,8 +59,8 @@ jobs:
           
       - name: Git for GKI
         run: |
-         git config --global user.name "user"
-         git config --global user.email "user@gmail.com"
+         git config --global user.name "user0"
+         git config --global user.email "user0@gmail.com"
 
       - name: Install repo
         run: |
@@ -96,29 +96,55 @@ jobs:
       - name: Add susfs configuration to kernel
         run: |
          cd Buildkernel
-         CONFIGS=( 
-         "CONFIG_KSU=y"
-         "CONFIG_KSU_SUSFS_SUS_SU=n"
-         "CONFIG_KSU_MANUAL_HOOK=y"
-         "CONFIG_KSU_SUSFS=y"
-         "CONFIG_KSU_SUSFS_HAS_MAGIC_MOUNT=y"
-         "CONFIG_KSU_SUSFS_SUS_PATH=y"
-         "CONFIG_KSU_SUSFS_SUS_MOUNT=y"
-         "CONFIG_KSU_SUSFS_AUTO_ADD_SUS_KSU_DEFAULT_MOUNT=y"
-         "CONFIG_KSU_SUSFS_AUTO_ADD_SUS_BIND_MOUNT=y"
-         "CONFIG_KSU_SUSFS_SUS_KSTAT=y"
-         "CONFIG_KSU_SUSFS_SUS_OVERLAYFS=n"
-         "CONFIG_KSU_SUSFS_TRY_UMOUNT=y"
-         "CONFIG_KSU_SUSFS_AUTO_ADD_TRY_UMOUNT_FOR_BIND_MOUNT=y"
-         "CONFIG_KSU_SUSFS_SPOOF_UNAME=y"
-         "CONFIG_KSU_SUSFS_ENABLE_LOG=y"
-         "CONFIG_KSU_SUSFS_HIDE_KSU_SUSFS_SYMBOLS=y"
-         "CONFIG_KSU_SUSFS_SPOOF_CMDLINE_OR_BOOTCONFIG=y"
-         "CONFIG_KSU_SUSFS_OPEN_REDIRECT=y"
-         )
-         for CONFIG in "${CONFIGS[@]}"; do
-         echo "$CONFIG" >> common/arch/arm64/configs/gki_defconfig
-         done
+         echo "CONFIG_KSU=y" >> common/arch/arm64/configs/gki_defconfig
+         echo "CONFIG_KSU_SUSFS_SUS_SU=n" >> common/arch/arm64/configs/gki_defconfig
+         echo "CONFIG_KSU_MANUAL_HOOK=y" >> common/arch/arm64/configs/gki_defconfig
+         echo "CONFIG_KSU_SUSFS=y" >> common/arch/arm64/configs/gki_defconfig
+         echo "CONFIG_KSU_SUSFS_HAS_MAGIC_MOUNT=y" >> common/arch/arm64/configs/gki_defconfig
+         echo "CONFIG_KSU_SUSFS_SUS_PATH=y" >> common/arch/arm64/configs/gki_defconfig
+         echo "CONFIG_KSU_SUSFS_SUS_MOUNT=y" >> common/arch/arm64/configs/gki_defconfig
+         echo "CONFIG_KSU_SUSFS_AUTO_ADD_SUS_KSU_DEFAULT_MOUNT=y" >> common/arch/arm64/configs/gki_defconfig
+         echo "CONFIG_KSU_SUSFS_AUTO_ADD_SUS_BIND_MOUNT=y" >> common/arch/arm64/configs/gki_defconfig
+         echo "CONFIG_KSU_SUSFS_SUS_KSTAT=y" >> common/arch/arm64/configs/gki_defconfig
+         echo "CONFIG_KSU_SUSFS_TRY_UMOUNT=y" >> common/arch/arm64/configs/gki_defconfig
+         echo "CONFIG_KSU_SUSFS_AUTO_ADD_TRY_UMOUNT_FOR_BIND_MOUNT=y" >> common/arch/arm64/configs/gki_defconfig
+         echo "CONFIG_KSU_SUSFS_SUS_OVERLAYFS=n" >> common/arch/arm64/configs/gki_defconfig
+         echo "CONFIG_KSU_SUSFS_SPOOF_UNAME=y" >> common/arch/arm64/configs/gki_defconfig
+         echo "CONFIG_KSU_SUSFS_ENABLE_LOG=y" >> common/arch/arm64/configs/gki_defconfig
+         echo "CONFIG_KSU_SUSFS_HIDE_KSU_SUSFS_SYMBOLS=y" >> common/arch/arm64/configs/gki_defconfig
+         echo "CONFIG_KSU_SUSFS_SPOOF_CMDLINE_OR_BOOTCONFIG=y" >> common/arch/arm64/configs/gki_defconfig
+         echo "CONFIG_KSU_SUSFS_OPEN_REDIRECT=y" >> common/arch/arm64/configs/gki_defconfig
+         echo "CONFIG_TMPFS_XATTR=y" >> common/arch/arm64/configs/gki_defconfig
+         echo "CONFIG_TMPFS_POSIX_ACL=y" >> common/arch/arm64/configs/gki_defconfig
+         echo "CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE=y" >> common/arch/arm64/configs/gki_defconfig
+         echo "CONFIG_BPF_STREAM_PARSER=y" >> common/arch/arm64/configs/gki_defconfig
+         echo "CONFIG_NETFILTER_XT_MATCH_ADDRTYPE=y" >> common/arch/arm64/configs/gki_defconfig
+         echo "CONFIG_NETFILTER_XT_SET=y" >> common/arch/arm64/configs/gki_defconfig
+         echo "CONFIG_IP_SET=y" >> common/arch/arm64/configs/gki_defconfig
+         echo "CONFIG_IP_SET_MAX=256" >> common/arch/arm64/configs/gki_defconfig
+         echo "CONFIG_IP_SET_BITMAP_IP=y" >> common/arch/arm64/configs/gki_defconfig
+         echo "CONFIG_IP_SET_BITMAP_IPMAC=y" >> common/arch/arm64/configs/gki_defconfig
+         echo "CONFIG_IP_SET_BITMAP_PORT=y" >> common/arch/arm64/configs/gki_defconfig
+         echo "CONFIG_IP_SET_HASH_IP=y" >> common/arch/arm64/configs/gki_defconfig
+         echo "CONFIG_IP_SET_HASH_IPMARK=y" >> common/arch/arm64/configs/gki_defconfig
+         echo "CONFIG_IP_SET_HASH_IPPORT=y" >> common/arch/arm64/configs/gki_defconfig
+         echo "CONFIG_IP_SET_HASH_IPPORTIP=y" >> common/arch/arm64/configs/gki_defconfig
+         echo "CONFIG_IP_SET_HASH_IPPORTNET=y" >> common/arch/arm64/configs/gki_defconfig
+         echo "CONFIG_IP_SET_HASH_IPMAC=y" >> common/arch/arm64/configs/gki_defconfig
+         echo "CONFIG_IP_SET_HASH_MAC=y" >> common/arch/arm64/configs/gki_defconfig
+         echo "CONFIG_IP_SET_HASH_NETPORTNET=y" >> common/arch/arm64/configs/gki_defconfig
+         echo "CONFIG_IP_SET_HASH_NET=y" >> common/arch/arm64/configs/gki_defconfig
+         echo "CONFIG_IP_SET_HASH_NETNET=y" >> common/arch/arm64/configs/gki_defconfig
+         echo "CONFIG_IP_SET_HASH_NETPORT=y" >> common/arch/arm64/configs/gki_defconfig
+         echo "CONFIG_IP_SET_HASH_NETIFACE=y" >> common/arch/arm64/configs/gki_defconfig
+         echo "CONFIG_IP_SET_LIST_SET=y" >> common/arch/arm64/configs/gki_defconfig
+         echo "CONFIG_IP6_NF_NAT=y" >> common/arch/arm64/configs/gki_defconfig
+         echo "CONFIG_IP6_NF_TARGET_MASQUERADE=y" >> common/arch/arm64/configs/gki_defconfig
+         echo "CONFIG_IP_ECN=y" >> common/arch/arm64/configs/gki_defconfig
+         echo "CONFIG_TCP_ECN=y" >> common/arch/arm64/configs/gki_defconfig
+         echo "CONFIG_IPV6_ECN=y" >> common/arch/arm64/configs/gki_defconfig
+         echo "CONFIG_IP_NF_TARGET_ECN=y" >> common/arch/arm64/configs/gki_defconfig
+         sed -i 's/check_defconfig//' ./common/build.config.gki
          echo -e "\e[33m[Done]\e[0m" Added susfs configuration to kernel
       
       - name: Add KPM configuration to kernel
@@ -131,7 +157,6 @@ jobs:
       - name: Set kernel suffix
         run: |
          cd Buildkernel
-         sudo sed -i 's/check_defconfig//' ./common/build.config.gki
          if [ "${{ github.event.inputs.Kernel_Suffix }}" = "no" ]; then
           sed -i '$i res=$(echo "$res" | sed '\''s/-dirty//g'\'')' common/scripts/setlocalversion
           echo -e "\e[33m[Done]\e[0m" Delete the dirty suffix
