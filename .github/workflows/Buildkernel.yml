@@ -133,12 +133,12 @@ jobs:
           sed -i '$i res=$(echo "$res" | sed '\''s/-dirty//g'\'')' common/scripts/setlocalversion
           echo -e "\e[33m[Done]\e[0m" Delete the dirty suffix
          else
-          sed -i '$s|echo "\$res"|echo "${{ github.event.inputs.Kernel_Suffix }}"|' ./common/scripts/setlocalversion
+          sed -i '$s|echo "\$res"|echo "\$res-g66e758f7d0c0-ab13748739"|' ./common/scripts/setlocalversion
           sed -i 's/build-timestamp = $(or $(KBUILD_BUILD_TIMESTAMP), $(build-timestamp-auto))/build-timestamp = "Tue Jul  8 09:17:32 UTC 2025"/' ./common/init/Makefile
           sed -i '/^[[:space:]]*"protected_exports_list"[[:space:]]*:[[:space:]]*"android\/abi_gki_protected_exports_aarch64",$/d' ./common/BUILD.bazel
           rm -rf ./common/android/abi_gki_protected_exports_*
           sed -i "/stable_scmversion_cmd/s/-maybe-dirty//g" ./build/kernel/kleaf/impl/stamp.bzl
-          sed -i '/^CONFIG_LOCALVERSION=/ s/="\([^"]*\)"/="${{ github.event.inputs.Kernel_Suffix }}"/' ./common/arch/arm64/configs/gki_defconfig
+          sed -E -i "/^CONFIG_LOCALVERSION=/ s/(.*)\"/\\1-g66e758f7d0c0-ab13748739\"/" ./common/arch/arm64/configs/gki_defconfig
           echo -e "\e[33m[Done]\e[0m" Setup custom suffix and build time
          fi
 
@@ -147,6 +147,8 @@ jobs:
          #export SOURCE_DATE_EPOCH=$(date -d "${{ github.event.inputs.Kernel_Time }}" +%s)
          #echo "SOURCE_DATE_EPOCH=$SOURCE_DATE_EPOCH" >> $GITHUB_ENV
          #echo -e "\e[33m[Done]\e[0m" Setup kernel build time
+         #sed -i '$s|echo "\$res"|echo "${{ github.event.inputs.Kernel_Suffix }}"|' ./common/scripts/setlocalversion
+         #sed -i '/^CONFIG_LOCALVERSION=/ s/="\([^"]*\)"/="${{ github.event.inputs.Kernel_Suffix }}"/' ./common/arch/arm64/configs/gki_defconfig
 
       - name: Build kernel
         run: |
@@ -186,8 +188,8 @@ jobs:
          cp /home/runner/work/RR/RR/Buildkernel/dist/kernel /home/runner/work/RR/RR/Buildkernel/patched/
          cp /home/runner/work/RR/RR/Buildkernel/SukiSU_patch/AnyKernel3/${{ github.event.inputs.Kernel_Version }}-android${{ github.event.inputs.Android_Version }}-AnyKernel3.zip /home/runner/work/RR/RR/Buildkernel/patched/
 
-      - name: Upload kernel&AnyKernel3
-        uses: actions/upload-artifact@v4
+      - name: Upload kernel and AnyKernel3
+        uses: actions/upload-artifact@v5
         with:
           name: kernel&AnyKernel3-${{ github.event.inputs.Kernel_Version }}-android${{ github.event.inputs.Android_Version }}
           path: |
