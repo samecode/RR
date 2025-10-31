@@ -136,12 +136,12 @@ jobs:
           sed -i '$i res=$(echo "$res" | sed '\''s/-dirty//g'\'')' common/scripts/setlocalversion
           echo -e "\e[33m[Done]\e[0m" Delete the dirty suffix
          else
-          sed -i '$s|echo "\$res"|echo "\$res-g66e758f7d0c0-ab13748739"|' ./common/scripts/setlocalversion
+          sed -i '$s|echo "\$res"|echo "${{ github.event.inputs.Kernel_Suffix }}"|' ./common/scripts/setlocalversion
           sed -i 's/build-timestamp = $(or $(KBUILD_BUILD_TIMESTAMP), $(build-timestamp-auto))/build-timestamp = "Tue Jul  8 09:17:32 UTC 2025"/' ./common/init/Makefile
           sed -i '/^[[:space:]]*"protected_exports_list"[[:space:]]*:[[:space:]]*"android\/abi_gki_protected_exports_aarch64",$/d' ./common/BUILD.bazel
           rm -rf ./common/android/abi_gki_protected_exports_*
           sed -i "/stable_scmversion_cmd/s/-maybe-dirty//g" ./build/kernel/kleaf/impl/stamp.bzl
-          sed -E -i "/^CONFIG_LOCALVERSION=/ s/(.*)\"/\\1-g66e758f7d0c0-ab13748739\"/" ./common/arch/arm64/configs/gki_defconfig
+          sed -i '/^CONFIG_LOCALVERSION=/ s/="\([^"]*\)"/="${{ github.event.inputs.Kernel_Suffix }}"/' ./common/arch/arm64/configs/gki_defconfig
           echo -e "\e[33m[Done]\e[0m" Setup custom suffix and build time
          fi
 
