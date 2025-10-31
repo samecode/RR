@@ -128,25 +128,26 @@ jobs:
          echo "CONFIG_KPM=y" >> ./common/arch/arm64/configs/gki_defconfig
          echo -e "\e[33m[Done]\e[0m" Added KPM configuration to kernel
 
-      - name: Set kernel suffix
+      - name: Set kernel suffix and build time
         run: |
          cd Buildkernel
          if [ "${{ github.event.inputs.Kernel_Suffix }}" = "no" ]; then
           sed -i '$i res=$(echo "$res" | sed '\''s/-dirty//g'\'')' common/scripts/setlocalversion
           echo -e "\e[33m[Done]\e[0m" Delete the dirty suffix
          else
+          sed -i 's/build-timestamp = $(or $(KBUILD_BUILD_TIMESTAMP), $(build-timestamp-auto))/build-timestamp = "Tue Jul  8 09:17:32 UTC 2025"/' ./common/init/Makefile
           sed -i '/^[[:space:]]*"protected_exports_list"[[:space:]]*:[[:space:]]*"android\/abi_gki_protected_exports_aarch64",$/d' ./common/BUILD.bazel
           rm -rf ./common/android/abi_gki_protected_exports_*
           sed -i "/stable_scmversion_cmd/s/-maybe-dirty//g" ./build/kernel/kleaf/impl/stamp.bzl
-          sed -i '/^CONFIG_LOCALVERSION=/ s/="\([^"]*\)"/="${{ github.event.inputs.Kernel_Suffix }}"/' ./common/arch/arm64/configs/gki_defconfig
-          echo -e "\e[33m[Done]\e[0m" Setup custom suffix
+          sed -E -i "/^CONFIG_LOCALVERSION=/ s/(.*)\"/\\1-g66e758f7d0c0-ab13748739\"/" ./common/arch/arm64/configs/gki_defconfig
+          echo -e "\e[33m[Done]\e[0m" Setup custom suffix and build time
          fi
 
-      - name: Set kernel build time
-        run: |
-         export SOURCE_DATE_EPOCH=$(date -d "${{ github.event.inputs.Kernel_Time }}" +%s)
-         echo "SOURCE_DATE_EPOCH=$SOURCE_DATE_EPOCH" >> $GITHUB_ENV
-         echo -e "\e[33m[Done]\e[0m" Setup kernel build time
+      #- name: Set kernel build time
+        #run: |
+         #export SOURCE_DATE_EPOCH=$(date -d "${{ github.event.inputs.Kernel_Time }}" +%s)
+         #echo "SOURCE_DATE_EPOCH=$SOURCE_DATE_EPOCH" >> $GITHUB_ENV
+         #echo -e "\e[33m[Done]\e[0m" Setup kernel build time
 
       - name: Build kernel
         run: |
@@ -154,7 +155,7 @@ jobs:
          sed -i 's/BUILD_SYSTEM_DLKM=1/BUILD_SYSTEM_DLKM=0/' common/build.config.gki.aarch64
          sed -i '/MODULES_ORDER=android\/gki_aarch64_modules/d' common/build.config.gki.aarch64
          sed -i '/KMI_SYMBOL_LIST_STRICT_MODE/d' common/build.config.gki.aarch64
-         tools/bazel run --config=fast --config=stamp --lto=thin //common:kernel_aarch64_dist -- --destdir=dist
+         tools/bazel run --config=fast --lto=thin //common:kernel_aarch64_dist -- --destdir=dist
 
       - name: KPM patch
         if: ${{inputs.Enable_KPM_Feature }}
