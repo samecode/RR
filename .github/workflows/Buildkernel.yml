@@ -137,7 +137,7 @@ jobs:
           echo -e "\e[33m[Done]\e[0m" Delete the dirty suffix
          else
           sed -i '$s|echo "\$res"|echo "\$res-g66e758f7d0c0-ab13748739"|' ./common/scripts/setlocalversion
-          sed -i 's/build-timestamp = $(or $(KBUILD_BUILD_TIMESTAMP), $(build-timestamp-auto))/build-timestamp = "Tue Jul 08 09:17:32 UTC 2025"/' ./common/init/Makefile
+          sed -i 's/build-timestamp = $(or $(KBUILD_BUILD_TIMESTAMP), $(build-timestamp-auto))/build-timestamp = "Tue Jul  8 09:17:32 UTC 2025"/' ./common/init/Makefile
           sed -i '/^[[:space:]]*"protected_exports_list"[[:space:]]*:[[:space:]]*"android\/abi_gki_protected_exports_aarch64",$/d' ./common/BUILD.bazel
           rm -rf ./common/android/abi_gki_protected_exports_*
           sed -i "/stable_scmversion_cmd/s/-maybe-dirty//g" ./build/kernel/kleaf/impl/stamp.bzl
