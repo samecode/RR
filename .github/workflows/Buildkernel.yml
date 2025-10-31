@@ -17,7 +17,7 @@ on:
       Kernel_Suffix:
         description: "Custom suffix to replace the dirty suffix (Just delete the dirty suffix,fill in [no])"
         required: false
-        default: '-g66e758f7d0c0-ab13748739'
+        default: '-android14-11-g66e758f7d0c0-ab13748739'
       Kernel_Time:
         description: "Build Time"
         required: true
@@ -140,7 +140,7 @@ jobs:
           sed -i '/^[[:space:]]*"protected_exports_list"[[:space:]]*:[[:space:]]*"android\/abi_gki_protected_exports_aarch64",$/d' ./common/BUILD.bazel
           rm -rf ./common/android/abi_gki_protected_exports_*
           sed -i "/stable_scmversion_cmd/s/-maybe-dirty//g" ./build/kernel/kleaf/impl/stamp.bzl
-          sed -i '$s|echo "\$res"|echo "\$res-g66e758f7d0c0-ab13748739"|' ./common/scripts/setlocalversion
+          sed -i '/^CONFIG_LOCALVERSION=/ s/="\([^"]*\)"/="${{ github.event.inputs.Kernel_Suffix }}"/' ./common/arch/arm64/configs/gki_defconfig
           echo -e "\e[33m[Done]\e[0m" Setup custom suffix and build time
          fi
 
