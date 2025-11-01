@@ -17,7 +17,7 @@ on:
       Kernel_Suffix:
         description: "Custom suffix to replace the dirty suffix (Just delete the dirty suffix,fill in [no])"
         required: false
-        default: '-android14-11-g66e758f7d0c0-ab13748739'
+        default: 'g66e758f7d0c0-ab13748739'
       Kernel_Time:
         description: "Build Time"
         required: true
@@ -129,27 +129,25 @@ jobs:
          echo "CONFIG_KPM=y" >> ./common/arch/arm64/configs/gki_defconfig
          echo -e "\e[33m[Done]\e[0m" Added KPM configuration to kernel
 
-      - name: Set kernel suffix and build time
+      - name: Set kernel suffix
         run: |
          cd Buildkernel
          if [ "${{ github.event.inputs.Kernel_Suffix }}" = "no" ]; then
           sed -i '$i res=$(echo "$res" | sed '\''s/-dirty//g'\'')' common/scripts/setlocalversion
           echo -e "\e[33m[Done]\e[0m" Delete the dirty suffix
          else
-          sed -i '$s|echo "\$res"|echo "${{ github.event.inputs.Kernel_Suffix }}"|' ./common/scripts/setlocalversion
-          sed -i -e "s|\$(preempt-flag-y) \"\$(build-timestamp)\"|\$(preempt-flag-y) \"Tue Jul  8 09:17:32 UTC 2025\"|" ./common/init/Makefile
+          sed -i '$s|echo "\$res"|echo "\$res-${{ github.event.inputs.Kernel_Suffix }}"|' ./common/scripts/setlocalversion
           sed -i '/^[[:space:]]*"protected_exports_list"[[:space:]]*:[[:space:]]*"android\/abi_gki_protected_exports_aarch64",$/d' ./common/BUILD.bazel
           rm -rf ./common/android/abi_gki_protected_exports_*
           sed -i "/stable_scmversion_cmd/s/-maybe-dirty//g" ./build/kernel/kleaf/impl/stamp.bzl
-          sed -i '/^CONFIG_LOCALVERSION=/ s/="\([^"]*\)"/="${{ github.event.inputs.Kernel_Suffix }}"/' ./common/arch/arm64/configs/gki_defconfig
-          echo -e "\e[33m[Done]\e[0m" Setup custom suffix and build time
+          echo -e "\e[33m[Done]\e[0m" Setup custom suffix
          fi
 
-      #- name: Set kernel build time
-        #run: |
-         #export SOURCE_DATE_EPOCH=$(date -d "${{ github.event.inputs.Kernel_Time }}" +%s)
-         #echo "SOURCE_DATE_EPOCH=$SOURCE_DATE_EPOCH" >> $GITHUB_ENV
-         #echo -e "\e[33m[Done]\e[0m" Setup kernel build time
+      - name: Set kernel build time
+        run: |
+         export SOURCE_DATE_EPOCH=$(date -d "${{ github.event.inputs.Kernel_Time }}" +%s)
+         echo "SOURCE_DATE_EPOCH=$SOURCE_DATE_EPOCH" >> $GITHUB_ENV
+         echo -e "\e[33m[Done]\e[0m" Setup kernel build time
 
       - name: Build kernel
         run: |
