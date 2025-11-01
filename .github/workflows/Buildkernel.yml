@@ -136,7 +136,7 @@ jobs:
           sed -i '$i res=$(echo "$res" | sed '\''s/-dirty//g'\'')' common/scripts/setlocalversion
           echo -e "\e[33m[Done]\e[0m" Delete the dirty suffix
          else
-          sed -i '$s|echo "\$res"|echo "$res-${{ github.event.inputs.Kernel_Suffix }}"|' ./common/scripts/setlocalversion
+          sed -i '$s|echo "\$res"|echo "$res"-"${{ github.event.inputs.Kernel_Suffix }}"|' ./common/scripts/setlocalversion
           sed -i "/stable_scmversion_cmd/s/-maybe-dirty//g" ./build/kernel/kleaf/impl/stamp.bzl
           echo -e "\e[33m[Done]\e[0m" Setup custom suffix
          fi
