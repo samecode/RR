@@ -97,6 +97,7 @@ jobs:
         run: |
          cd Buildkernel
          echo "CONFIG_KSU=y" >> ./common/arch/arm64/configs/gki_defconfig
+         echo "CONFIG_KSU=m" >> ./common/arch/arm64/configs/gki_defconfig
          echo "CONFIG_KSU_SUSFS_SUS_SU=n" >> ./common/arch/arm64/configs/gki_defconfig
          echo "CONFIG_KSU_MANUAL_HOOK=y" >> ./common/arch/arm64/configs/gki_defconfig
          echo "CONFIG_KSU_SUSFS=y" >> ./common/arch/arm64/configs/gki_defconfig
@@ -133,15 +134,15 @@ jobs:
           echo -e "\e[33m[Done]\e[0m" Delete the dirty suffix
          else
           sed -i "/stable_scmversion_cmd/s/-maybe-dirty//g" ./build/kernel/kleaf/impl/stamp.bzl
-          sed -i '$s|echo "\$res"|echo "${{ github.event.inputs.Kernel_Suffix }}"|' ./common/scripts/setlocalversion
-          sed -i '/^CONFIG_LOCALVERSION=/ s/="\([^"]*\)"/="${{ github.event.inputs.Kernel_Suffix }}"/' ./common/arch/arm64/configs/gki_defconfig
+          sudo sed -i "s/-4k/-gd4aed7ed470e-ab13759939-4k/g" ./common/arch/arm64/configs/gki_defconfig
           echo -e "\e[33m[Done]\e[0m" Setup custom suffix
          fi
 
       - name: Set kernel build time
         run: |
-         export SOURCE_DATE_EPOCH=$(date -d "${{ github.event.inputs.Kernel_Time }}" +%s)
-         echo "SOURCE_DATE_EPOCH=$SOURCE_DATE_EPOCH" >> $GITHUB_ENV
+         CURRENT_TIME="${{ github.event.inputs.Kernel_Time }}"
+         perl -pi -e "s{UTS_VERSION=\"\\\$\(echo \\\$UTS_VERSION \\\$CONFIG_FLAGS \\\$TIMESTAMP \\| cut -b -\\\$UTS_LEN\)\"}{UTS_VERSION=\"#1 SMP PREEMPT $CURRENT_TIME\"}" ./common/scripts/mkcompile_h
+         sed -i -e "s|\$(preempt-flag-y) \"\$(build-timestamp)\"|\$(preempt-flag-y) \"$CURRENT_TIME\"|" ./common/init/Makefile
          echo -e "\e[33m[Done]\e[0m" Setup kernel build time
 
       - name: Build kernel
@@ -152,7 +153,7 @@ jobs:
          sed -i 's/BUILD_SYSTEM_DLKM=1/BUILD_SYSTEM_DLKM=0/' common/build.config.gki.aarch64
          sed -i '/MODULES_ORDER=android\/gki_aarch64_modules/d' common/build.config.gki.aarch64
          sed -i '/KMI_SYMBOL_LIST_STRICT_MODE/d' common/build.config.gki.aarch64
-         tools/bazel run --config=stamp --config=fast --lto=thin //common:kernel_aarch64_dist -- --destdir=dist
+         tools/bazel run --config=fast --lto=thin //common:kernel_aarch64_dist -- --destdir=dist
          
       - name: KPM patch
         if: ${{inputs.Enable_KPM_Feature }}
