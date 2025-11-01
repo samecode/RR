@@ -133,7 +133,8 @@ jobs:
           echo -e "\e[33m[Done]\e[0m" Delete the dirty suffix
          else
           sed -i "/stable_scmversion_cmd/s/-maybe-dirty//g" ./build/kernel/kleaf/impl/stamp.bzl
-          sudo sed -i "s/-4k/-${{ github.event.inputs.KERNEL_SUFFIX }}/g" ./common/arch/arm64/configs/gki_defconfig
+          sed -i '$s|echo "\$res"|echo "${{ github.event.inputs.Kernel_Suffix }}"|' ./common/scripts/setlocalversion
+          sed -i '/^CONFIG_LOCALVERSION=/ s/="\([^"]*\)"/="${{ github.event.inputs.Kernel_Suffix }}"/' ./common/arch/arm64/configs/gki_defconfig
           echo -e "\e[33m[Done]\e[0m" Setup custom suffix
          fi
 
