@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
     inputs:
       Android_Release:
-        description: "Android Release"
+        description: "Kernel Android Release"
         required: true
         type: choice
         default: '14'
@@ -21,7 +21,7 @@ on:
       Security_Patch:
         description: "(Recommend same as stock kernel)  ㅤㅤㅤKernel Security Patch or lts (latest)"
         required: true
-        default: '2025-05'
+        default: '2025-04'
       Kernel_Suffix:
         description: "(Recommend same as stock kernel)ㅤ‏‎‏‎‏‎‏‎ ㅤ‏‎‏‎‏‎‏‎ ㅤ‏‎‏‎‏‎‏‎ ㅤ‏‎‏‎‏‎‏‎ (Just delete the dirty suffix,fill in [no]) Kernel Suffix"
         required: false
@@ -56,6 +56,8 @@ jobs:
         run: |
          mkdir Buildkernel
          cd Buildkernel
+         git config --global user.email "user001@gmail.com"
+         git config --global user.name "user001"
          repo init -u https://android.googlesource.com/kernel/manifest -b common-android${{ github.event.inputs.Android_Release }}-${{ github.event.inputs.Kernel_Version }}-${{ github.event.inputs.Security_Patch }} --depth=1
          repo sync
 
@@ -87,11 +89,10 @@ jobs:
          cd Buildkernel
          curl -LSs "https://raw.githubusercontent.com/SukiSU-Ultra/SukiSU-Ultra/main/kernel/setup.sh" | bash -s susfs-main
         
-      - name: Setup susfs and manual hooks
+      - name: Setup susfs
         run: |
          cd Buildkernel
          git clone https://gitlab.com/simonpunk/susfs4ksu.git -b gki-android${{ github.event.inputs.Android_Release }}-${{ github.event.inputs.Kernel_Version }}
-         git clone https://github.com/SukiSU-Ultra/SukiSU_patch.git
          cp susfs4ksu/kernel_patches/50_add_susfs_in_gki-android${{ github.event.inputs.Android_Release }}-${{ github.event.inputs.Kernel_Version }}.patch ./common/
          cp susfs4ksu/kernel_patches/fs/* ./common/fs/
          cp susfs4ksu/kernel_patches/include/linux/* ./common/include/linux/
@@ -102,7 +103,6 @@ jobs:
         run: |
          cd Buildkernel
          echo "CONFIG_KSU=y" >> ./common/arch/arm64/configs/gki_defconfig
-         echo "CONFIG_KSU_SUSFS_SUS_SU=n" >> ./common/arch/arm64/configs/gki_defconfig
          echo "CONFIG_KSU_SUSFS=y" >> ./common/arch/arm64/configs/gki_defconfig
          echo "CONFIG_KSU_SUSFS_SUS_MAP=y" >> ./common/arch/arm64/configs/gki_defconfig
          echo "CONFIG_KSU_SUSFS_SUS_PATH=y" >> ./common/arch/arm64/configs/gki_defconfig
@@ -205,11 +205,16 @@ jobs:
          cd Buildkernel/dist
          cp Image kernel
 
+      - name: Install AnyKernel3 toolkit
+        run: |
+         cd Buildkernel
+         git clone https://github.com/SukiSU-Ultra/SukiSU_patch.git
+
       - name: Create AnyKernel3
         run: |
          cd Buildkernel/SukiSU_patch/AnyKernel3
          cp /home/runner/work/RR/RR/Buildkernel/dist/Image /home/runner/work/RR/RR/Buildkernel/SukiSU_patch/AnyKernel3/
-         zip -r "android${{ github.event.inputs.Android_Release }}-${{ github.event.inputs.Kernel_Version }}-AnyKernel3.zip" ./*         
+         zip -r "${{ github.event.inputs.Kernel_Version }}-android${{ github.event.inputs.Android_Release }}-AnyKernel3.zip" ./*         
 
       - name: Output AnyKernel3
         run: |
@@ -217,12 +222,12 @@ jobs:
          mkdir patched
          cd patched
          cp /home/runner/work/RR/RR/Buildkernel/dist/kernel /home/runner/work/RR/RR/Buildkernel/patched/
-         cp /home/runner/work/RR/RR/Buildkernel/SukiSU_patch/AnyKernel3/android${{ github.event.inputs.Android_Release }}-${{ github.event.inputs.Kernel_Version }}-AnyKernel3.zip /home/runner/work/RR/RR/Buildkernel/patched/
+         cp /home/runner/work/RR/RR/Buildkernel/SukiSU_patch/AnyKernel3/${{ github.event.inputs.Kernel_Version }}-android${{ github.event.inputs.Android_Release }}-AnyKernel3.zip /home/runner/work/RR/RR/Buildkernel/patched/
 
       - name: Upload Kernel and AnyKernel3
         uses: actions/upload-artifact@v5
         with:
-          name: Kernel&AnyKernel3-android${{ github.event.inputs.Android_Release }}-${{ github.event.inputs.Kernel_Version }}
+          name: Kernel&AnyKernel3-${{ github.event.inputs.Kernel_Version }}-android${{ github.event.inputs.Android_Release }}
           path: |
             Buildkernel/patched/kernel
             Buildkernel/patched/*.zip
