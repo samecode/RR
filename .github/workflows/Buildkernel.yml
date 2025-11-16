@@ -21,7 +21,7 @@ on:
       Security_Patch:
         description: "(Recommend same as stock kernel)  ㅤㅤㅤKernel Security Patch or lts (latest)"
         required: true
-        default: '2025-04'
+        default: '2025-05'
       Kernel_Suffix:
         description: "(Recommend same as stock kernel)ㅤ‏‎‏‎‏‎‏‎ ㅤ‏‎‏‎‏‎‏‎ ㅤ‏‎‏‎‏‎‏‎ ㅤ‏‎‏‎‏‎‏‎ (Just delete the dirty suffix,fill in [no]) Kernel Suffix"
         required: false
