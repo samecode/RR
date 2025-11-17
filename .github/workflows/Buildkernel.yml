@@ -56,8 +56,8 @@ jobs:
         run: |
          mkdir Buildkernel
          cd Buildkernel
-         git config --global user.email "user004@gmail.com"
-         git config --global user.name "user004"
+         git config --global user.email "use404@gmail.com"
+         git config --global user.name "use404"
          repo init -u https://android.googlesource.com/kernel/manifest -b common-android${{ github.event.inputs.Android_Release }}-${{ github.event.inputs.Kernel_Version }}-${{ github.event.inputs.Security_Patch }} --depth=1
          repo sync
 
@@ -172,12 +172,12 @@ jobs:
           echo -e "\e[33m[Done]\e[0m" Setup custom suffix
          fi
 
-      - name: Set kernel build time
+      - name: Set kernel build timestamp
         run: |
          cd Buildkernel
          perl -pi -e "s{UTS_VERSION=\"\\\$\(echo \\\$UTS_VERSION \\\$CONFIG_FLAGS \\\$TIMESTAMP \\| cut -b -\\\$UTS_LEN\)\"}{UTS_VERSION=\"#1 SMP PREEMPT ${{ github.event.inputs.Kernel_Time }}\"}" ./common/scripts/mkcompile_h
          sed -i -e "s|\$(preempt-flag-y) \"\$(build-timestamp)\"|\$(preempt-flag-y) \"${{ github.event.inputs.Kernel_Time }}\"|" ./common/init/Makefile
-         echo -e "\e[33m[Done]\e[0m" Setup kernel build time
+         echo -e "\e[33m[Done]\e[0m" Setup kernel build timestamp
 
       - name: Build kernel
         run: |
