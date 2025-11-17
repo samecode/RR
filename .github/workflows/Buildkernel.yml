@@ -56,8 +56,8 @@ jobs:
         run: |
          mkdir Buildkernel
          cd Buildkernel
-         git config --global user.email "use404@gmail.com"
-         git config --global user.name "use404"
+         git config --global user.email "use8991@gmail.com"
+         git config --global user.name "use8991"
          repo init -u https://android.googlesource.com/kernel/manifest -b common-android${{ github.event.inputs.Android_Release }}-${{ github.event.inputs.Kernel_Version }}-${{ github.event.inputs.Security_Patch }} --depth=1
          repo sync
 
