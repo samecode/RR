@@ -21,15 +21,15 @@ on:
       Security_Patch:
         description: "(Recommend same as stock kernel)  ㅤㅤㅤKernel Security Patch or lts (latest)"
         required: true
-        default: '2025-05'
+        default: '2025-09'
       Kernel_Suffix:
         description: "(Recommend same as stock kernel)ㅤ‏‎‏‎‏‎‏‎ ㅤ‏‎‏‎‏‎‏‎ ㅤ‏‎‏‎‏‎‏‎ ㅤ‏‎‏‎‏‎‏‎ (Just delete the dirty suffix,fill in [no]) Kernel Suffix"
         required: false
-        default: 'g66e758f7d0c0-ab13748739'
+        default: 'gc1de4747ac59-ab14219743'
       Kernel_Time:
         description: "(Recommend same as stock kernel)  ㅤㅤㅤKernel Build Timestamp"
         required: true
-        default: 'Tue Jul  8 09:17:32 UTC 2025'
+        default: 'Mon Oct  6 16:50:48 UTC 2025'
       Enable_KPM_Feature:
         description: "Enable KPM Feature"
         required: false
@@ -87,7 +87,7 @@ jobs:
       - name: Set up SukiSU-Ultra
         run: |
          cd Buildkernel
-         curl -LSs "https://raw.githubusercontent.com/SukiSU-Ultra/SukiSU-Ultra/main/kernel/setup.sh" | bash -s susfs-main
+         curl -LSs "https://raw.githubusercontent.com/SukiSU-Ultra/SukiSU-Ultra/main/kernel/setup.sh" | bash -s builtin
         
       - name: Set up susfs
         run: |
