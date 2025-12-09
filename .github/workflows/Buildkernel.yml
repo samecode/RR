@@ -97,7 +97,7 @@ jobs:
          cp susfs4ksu/kernel_patches/fs/* ./common/fs/
          cp susfs4ksu/kernel_patches/include/linux/* ./common/include/linux/
          cd common
-         patch -p1 --fuzz=3 < 50_add_susfs_in_gki-android${{ github.event.inputs.Android_Release }}-${{ github.event.inputs.Kernel_Version }}.patch
+         patch -p1 < 50_add_susfs_in_gki-android${{ github.event.inputs.Android_Release }}-${{ github.event.inputs.Kernel_Version }}.patch
            
       - name: Add susfs configuration to kernel
         run: |
