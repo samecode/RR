@@ -49,7 +49,7 @@ jobs:
       - name: Maximize build space
         uses: AdityaGarg8/remove-unwanted-software@v5
         with:
-          remove-android: "true"
+          remove-dotnet: 'true'
           
       - name: Set up repo
         run: |
